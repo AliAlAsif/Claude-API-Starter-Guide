@@ -23,6 +23,7 @@ jobs:
         run: python scripts/update_prices.py
 
       - name: Open a pull request if prices changed
+        if: hashFiles('pr_body.md') != ''   # the script only writes this file when prices changed
         uses: peter-evans/create-pull-request@v7
         with:
           add-paths: prices.json
