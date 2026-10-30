@@ -1,0 +1,33 @@
+name: Update prices
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # every Monday at 06:00 UTC
+  workflow_dispatch:       # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Read the pricing page and update prices.json
+        run: python scripts/update_prices.py
+
+      - name: Open a pull request if prices changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          add-paths: prices.json
+          branch: auto/update-prices
+          delete-branch: true
+          commit-message: "Update Claude API prices"
+          title: "Update Claude API prices"
+          body-path: pr_body.md
