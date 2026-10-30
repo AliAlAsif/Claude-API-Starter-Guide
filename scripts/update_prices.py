@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Update prices.json from Anthropic's pricing page (Markdown version).
 
-- Reads the table whose header has "Base Input Tokens" and "Output Tokens".
+- Reads the table whose header has "Base input tokens" and "Output tokens" (case-insensitive).
 - Takes the FIRST dollar amount in each cell (the base / up-to-100K rate).
 - Writes prices.json only when a price changed, and writes pr_body.md for the PR.
 - Exits with an error if a model row cannot be found, so a layout change
@@ -37,10 +37,11 @@ def tables(md):
     i = 0
     while i < len(lines):
         line = lines[i]
-        if line.lstrip().startswith("|") and "Base Input" in line and "Output Tokens" in line:
+        low = line.lower()
+        if line.lstrip().startswith("|") and "base input" in low and "output tokens" in low:
             head = cells(line)
-            ic = next(n for n, c in enumerate(head) if "Base Input" in c)
-            oc = next(n for n, c in enumerate(head) if c.startswith("Output"))
+            ic = next(n for n, c in enumerate(head) if "base input" in c.lower())
+            oc = next(n for n, c in enumerate(head) if c.lower().startswith("output"))
             rows, j = [], i + 1
             while j < len(lines) and lines[j].lstrip().startswith("|"):
                 if not re.match(r"^\s*\|[\s:|-]+\|?\s*$", lines[j]):  # skip |---|---|
