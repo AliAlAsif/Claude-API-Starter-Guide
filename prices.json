@@ -1,0 +1,44 @@
+{
+  "updated": "2026-10-30",
+  "source": "https://platform.claude.com/docs/en/about-claude/pricing",
+  "source_md": "https://platform.claude.com/docs/en/about-claude/pricing.md",
+  "models": [
+    {
+      "key": "haiku",
+      "name": "Haiku 5.5",
+      "id": "claude-haiku-5-5",
+      "input": 0.1,
+      "output": 0.5,
+      "best": "Testing, high volume (prompts up to 100K)",
+      "long_context": { "above_tokens": 100000, "input": 0.5, "output": 2.5 },
+      "match": ["Claude Haiku 5\\.5"]
+    },
+    {
+      "key": "sonnet",
+      "name": "Sonnet 5.5",
+      "id": "claude-sonnet-5-5",
+      "input": 2.0,
+      "output": 10.0,
+      "best": "Everyday quality work, code",
+      "match": ["Claude Sonnet 5\\.5"]
+    },
+    {
+      "key": "opus",
+      "name": "Opus 5.5",
+      "id": "claude-opus-5-5",
+      "input": 4.0,
+      "output": 20.0,
+      "best": "Complex projects, agents",
+      "match": ["Claude Opus 5\\.5"]
+    },
+    {
+      "key": "fable",
+      "name": "Fable 5.1",
+      "id": "claude-fable-5-1",
+      "input": 10.0,
+      "output": 50.0,
+      "best": "Most capable, research",
+      "match": ["Claude Fable 5\\.1", "Claude Fable 5\\b"]
+    }
+  ]
+}

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claude API Starter Guide (General)</title>
+<style>
+:root{--bg:#f6f8fa;--sf:#fff;--tx:#1b2430;--mu:#5b6673;--ac:#1f5fbf;--acx:#fff;--bd:#dde2e8;--cb:#eef1f5;--ok:#e6f4ea;--wn:#fff3dc;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f141a;--sf:#171e26;--tx:#e6ebf0;--mu:#9aa6b2;--ac:#6aa8ff;--acx:#0b1420;--bd:#2a3440;--cb:#1e2731;--ok:#17301f;--wn:#3a2d12;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f141a;--sf:#171e26;--tx:#e6ebf0;--mu:#9aa6b2;--ac:#6aa8ff;--acx:#0b1420;--bd:#2a3440;--cb:#1e2731;--ok:#17301f;--wn:#3a2d12;color-scheme:dark}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-behavior:smooth;scroll-padding-top:calc(env(safe-area-inset-top,0px) + 64px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--sf);z-index:10}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--sf);border-bottom:1px solid var(--bd)}
+nav{max-width:980px;margin:0 auto;padding:10px 16px;display:flex;gap:6px;align-items:center;overflow-x:auto;white-space:nowrap}
+nav b{margin-right:8px}
+nav a{color:var(--mu);text-decoration:none;padding:4px 10px;border-radius:999px;font-size:14px}
+nav a:hover{background:var(--cb);color:var(--tx)}
+nav button{margin-left:auto}
+main{max-width:980px;margin:0 auto;padding:0 16px 48px}
+.hero{padding:44px 0 8px}
+h1{font-size:clamp(28px,5vw,42px);line-height:1.15;margin:0 0 10px}
+h2{font-size:26px;margin:0 0 6px}
+h3{font-size:17px;margin:16px 0 6px}
+section{padding:34px 0 4px}
+.lead{color:var(--mu);font-size:18px;margin:0}
+.sub{color:var(--mu);margin:0 0 14px}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.card{background:var(--sf);border:1px solid var(--bd);border-radius:12px;padding:16px}
+.note{border-left:4px solid #2e8b57;background:var(--ok);padding:10px 14px;border-radius:6px;margin:14px 0}
+.note.w{border-color:#e08a00;background:var(--wn)}
+code{font-family:Consolas,Menlo,monospace;font-size:.9em;background:var(--cb);padding:1px 5px;border-radius:4px}
+.cw{position:relative;margin:8px 0}
+pre{margin:0;background:var(--cb);border-radius:10px;padding:14px;overflow-x:auto;font:13px/1.5 Consolas,Menlo,monospace}
+pre code{background:none;padding:0}
+.cp{position:absolute;top:8px;right:8px}
+button{font:inherit;font-size:13px;background:var(--sf);color:var(--tx);border:1px solid var(--bd);border-radius:8px;padding:4px 10px;cursor:pointer}
+button:hover{border-color:var(--ac)}
+.seg{display:inline-flex;margin:4px 8px 4px 0}
+.seg button{border-radius:0;margin-left:-1px}
+.seg button:first-child{border-radius:8px 0 0 8px;margin-left:0}
+.seg button:last-child{border-radius:0 8px 8px 0}
+.seg button.on{background:var(--ac);color:var(--acx);border-color:var(--ac)}
+.tw{overflow-x:auto;margin:10px 0}
+table{border-collapse:collapse;width:100%;min-width:520px;background:var(--sf);font-size:14.5px}
+th,td{border:1px solid var(--bd);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--cb)}
+label{display:block;font-size:13px;color:var(--mu);margin-bottom:3px}
+input,select{width:100%;font:inherit;padding:8px;border:1px solid var(--bd);border-radius:8px;background:var(--bg);color:var(--tx)}
+.row{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:12px}
+.out{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.out div{background:var(--cb);border-radius:10px;padding:10px 12px}
+.out b{display:block;font-size:20px;overflow-wrap:anywhere}
+.out span{font-size:12.5px;color:var(--mu)}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:16px;color:var(--tx)}
+.chk input{width:auto;margin-top:5px}
+footer{color:var(--mu);font-size:14px;border-top:1px solid var(--bd);padding-top:16px;margin-top:36px}
+</style>
+</head>
+<body>
+<header><nav>
+<b>Claude API Guide</b>
+<a href="#you">My credit</a><a href="#setup">Setup</a><a href="#concepts">Concepts</a><a href="#calc">Calculator</a><a href="#prices">Prices</a><a href="#keys">API keys</a><a href="#billing">Billing</a><a href="#errors">Errors</a>
+<button id="theme" aria-label="Toggle theme">Theme</button>
+</nav></header>
+<main>
+<div class="hero">
+<h1>Claude API Starter Guide</h1>
+<p class="lead">Set up the API, understand token costs, protect your keys and track your prepaid credit. Works for any currency and any budget.</p>
+</div>
+
+<section id="you">
+<h2>My credit</h2>
+<p class="sub">Enter what you bought. The calculators below use these numbers, and your browser remembers them on this device.</p>
+<div class="card">
+<div class="row">
+<div><label for="cur">Your currency code</label><input id="cur" maxlength="6" value="USD"></div>
+<div><label for="cr">Credit bought (USD)</label><input id="cr" type="number" min="0" step="any"></div>
+<div><label for="pd">Total paid incl. tax (your currency)</label><input id="pd" type="number" min="0" step="any"></div>
+<div><label for="dt">Purchase date</label><input id="dt" type="date"></div>
+</div>
+<div class="out" id="st"></div>
+<p style="margin:10px 0 0"><button id="reset">Reset</button></p>
+</div>
+<p class="sub" style="margin-top:8px">Paid amount ÷ credit gives your effective cost per $1, so taxes and card conversion fees are included automatically. Check the exact expiry date in your Console, because it can differ by a day.</p>
+</section>
+
+<section id="setup">
+<h2>Setup in five steps</h2>
+<p class="sub">Pick your system and language.</p>
+<div><span class="seg" data-g="os"><button class="on" data-v="win">Windows</button><button data-v="mac">macOS / Linux</button></span>
+<span class="seg" data-g="lg"><button class="on" data-v="py">Python</button><button data-v="js">JavaScript</button><button data-v="curl">curl</button></span></div>
+<ol>
+<li><b>Create an account</b> in the Claude Console and add credit (a small amount is enough to start).</li>
+<li><b>Create a key:</b> click <b>Get API key</b>, name it, and copy it immediately. It is shown only once.</li>
+<li><b>Store it as an environment variable</b> instead of in your code:
+<div class="cw"><pre><code id="k"></code></pre><button class="cp">Copy</button></div></li>
+<li><b>Install the SDK:</b>
+<div class="cw"><pre><code id="ins"></code></pre><button class="cp">Copy</button></div></li>
+<li><b>Make your first call</b> and read the printed token usage:
+<div class="cw"><pre><code id="fc"></code></pre><button class="cp">Copy</button></div></li>
+</ol>
+<p class="sub">Prefer files? Put <code>ANTHROPIC_API_KEY=...</code> in a <code>.env</code> file, load it with your language’s dotenv package, and add <code>.env</code> to <code>.gitignore</code>.</p>
+</section>
+
+<section id="concepts">
+<h2>Four concepts that explain the rest</h2>
+<div class="grid">
+<div class="card"><h3 style="margin-top:0">1. Stateless API</h3>The model remembers nothing between calls. A chat works by resending the whole history each time, so turn 10 pays again for turns 1 to 9.</div>
+<div class="card"><h3 style="margin-top:0">2. Tokens</h3>A token is about 4 characters or 0.75 of an English word. You pay for input and output tokens, and output costs <b>5×</b> input on every current model. Non-English text often needs more tokens per word.</div>
+<div class="card"><h3 style="margin-top:0">3. max_tokens</h3>Caps the output only. If it is hit, the reply is cut off and <code>stop_reason</code> is <code>"max_tokens"</code>. Ask for brevity in the system prompt as well.</div>
+<div class="card"><h3 style="margin-top:0">4. Context window</h3>Prompts can reach about 1M tokens, but every token is billed. Haiku 5.5 charges 5× more per token once a prompt passes 100K tokens.</div>
+</div>
+</section>
+
+<section id="calc">
+<h2>Cost calculators</h2>
+<p class="sub">Cost = (input tokens × input price + output tokens × output price) ÷ 1,000,000.</p>
+<div class="card">
+<div class="row">
+<div><label for="model">Model</label><select id="model"></select></div>
+</div>
+<div class="row" id="cust" style="display:none">
+<div><label for="pi">Input price ($ per 1M tokens)</label><input id="pi" type="number" min="0" step="any" value="1"></div>
+<div><label for="po">Output price ($ per 1M tokens)</label><input id="po" type="number" min="0" step="any" value="5"></div>
+</div>
+
+<h3 style="margin-top:4px">1. One request</h3>
+<div class="row">
+<div><label for="ti">Input tokens</label><input id="ti" type="number" min="0" value="500"></div>
+<div><label for="to">Output tokens</label><input id="to" type="number" min="0" value="500"></div>
+</div>
+<div class="out" id="o1"></div>
+<div class="tw"><table><tr><th>Same request on…</th><th>Cost (USD)</th><th>Cost (your currency)</th><th>Requests your credit buys</th></tr><tbody id="cmp"></tbody></table></div>
+
+<h3>2. A chat that resends its history</h3>
+<div class="row">
+<div><label for="tt">Turns</label><input id="tt" type="number" min="1" max="200" value="10"></div>
+<div><label for="ts">System prompt tokens</label><input id="ts" type="number" min="0" value="100"></div>
+<div><label for="tu">Tokens per question</label><input id="tu" type="number" min="0" value="150"></div>
+<div><label for="tr">Tokens per reply</label><input id="tr" type="number" min="0" value="500"></div>
+</div>
+<div class="out" id="o2"></div>
+
+<h3>3. Budget planner (uses the request from section 1)</h3>
+<div class="row"><div><label for="rd">Requests per day</label><input id="rd" type="number" min="0" value="50"></div></div>
+<div class="out" id="o3"></div>
+</div>
+<p class="sub" style="margin-top:10px">Not sure about your token counts? Measure them with the SDK’s token-counting method, or just print <code>usage</code> from a few real calls and use those numbers.</p>
+</section>
+
+<section id="prices">
+<h2>Prices per million tokens</h2>
+<p class="sub" id="pinfo"></p>
+<div class="tw"><table>
+<thead><tr><th>Model</th><th>Model ID</th><th>Input</th><th>Output</th><th>Best for</th></tr></thead>
+<tbody id="ptb"></tbody>
+</table></div>
+<div class="note" id="rules"></div>
+<h3>Making credit last</h3>
+<ul>
+<li>Develop on the cheapest model and switch up only where quality demands it.</li>
+<li>Set a low <code>max_tokens</code> and ask for short answers, since output costs 5× more.</li>
+<li>Trim chat history and never resend large files every turn.</li>
+<li>Use the Batch API for bulk work, and learn prompt caching once prompts get large.</li>
+</ul>
+</section>
+
+<section id="keys">
+<h2>API keys: use, safety and expiry</h2>
+<p class="sub">A key (starts with <code>sk-ant-</code>) charges your balance. Anyone holding it can spend your credit.</p>
+<div class="tw"><table>
+<tr><th>Item</th><th>Expires?</th><th>Notes</th></tr>
+<tr><td>API key</td><td>No automatic expiry found</td><td>Active until you delete or disable it. Rotating every 90 days is a good habit, not a rule. Confirm on your Console’s API keys page.</td></tr>
+<tr><td>Prepaid credit</td><td>Yes, after one year</td><td>See your date in “My credit”. Per Anthropic’s terms it cannot be extended and is non-refundable.</td></tr>
+<tr><td>Key with $0 balance</td><td>Key still exists</td><td>Calls fail until you add credit.</td></tr>
+</table></div>
+<h3>Safety rules</h3>
+<ul>
+<li>Never paste a key into code, notebooks, screenshots, chats or a public repository.</li>
+<li>Use one key per project or device so one can be deleted without breaking the rest.</li>
+<li>Never put a key in browser or mobile-app code. Call the API from a backend.</li>
+<li>In Colab, Kaggle or CI, use the built-in secrets feature.</li>
+<li>Check the Spending page regularly. Exposed keys found on GitHub are reported and deactivated, but do not rely on that.</li>
+<li>To rotate: create a new key, update your apps, test, then delete the old key.</li>
+</ul>
+<div class="note w"><b>If a key leaks:</b> delete it immediately in the Console (API keys page, three-dot menu, Delete), create a new one, and review Spending for unfamiliar usage.</div>
+</section>
+
+<section id="billing">
+<h2>Credit, billing and limits</h2>
+<ul>
+<li><b>Expiry:</b> prepaid credit lasts one year from issue under Anthropic’s credit terms, with no extension and no refund. Use it in time.</li>
+<li><b>Taxes:</b> VAT, GST or sales tax may be added at checkout depending on your country. Use “Total paid” above to include it.</li>
+<li><b>Auto-reload:</b> keep it off while learning, so a bug cannot silently refill your balance.</li>
+<li><b>Rate limits:</b> depend on your usage tier. New accounts start low and limits grow with spending.</li>
+<li><b>Zero balance:</b> requests fail until you add credit.</li>
+</ul>
+<div class="note w"><b>Loop warning:</b> never call the API inside a loop without a counter or break condition.</div>
+</section>
+
+<section id="errors">
+<h2>Common errors and fixes</h2>
+<div class="tw"><table>
+<tr><th>Error</th><th>Meaning</th><th>Fix</th></tr>
+<tr><td>401 authentication_error</td><td>Key wrong, deleted or not loaded</td><td>Check the key; reopen the terminal after setting the variable</td></tr>
+<tr><td>400 invalid_request_error</td><td>Malformed request, or credit balance too low</td><td>Read the message; add funds if it mentions credit</td></tr>
+<tr><td>404 not_found_error</td><td>Model name not recognised</td><td>Use the exact ID, such as <code>claude-haiku-5-5</code></td></tr>
+<tr><td>429 rate_limit_error</td><td>Too many requests or tokens per minute</td><td>Wait and retry; the SDKs already retry a couple of times</td></tr>
+<tr><td>500 / 529</td><td>Server problem or high demand</td><td>Retry after a few seconds</td></tr>
+<tr><td>stop_reason "max_tokens"</td><td>Reply cut off at your cap</td><td>Raise <code>max_tokens</code> or ask for a shorter answer</td></tr>
+</table></div>
+<h3>Checklist before running anything</h3>
+<label class="chk"><input type="checkbox"> Key is in an environment variable, and <code>.env</code> is in <code>.gitignore</code></label>
+<label class="chk"><input type="checkbox"> <code>max_tokens</code> is set and I am using a cheap model while testing</label>
+<label class="chk"><input type="checkbox"> I print token usage and check Spending after the first runs</label>
+<label class="chk"><input type="checkbox"> No unbounded loops, and auto-reload is off</label>
+<label class="chk"><input type="checkbox"> Chat history is trimmed if conversations get long</label>
+</section>
+
+<footer>Prices come from prices.json, which a weekly job compares with Anthropic’s pricing page, and they can still change. Verify at platform.claude.com/docs/en/about-claude/pricing and anthropic.com/legal/credit-terms.</footer>
+</main>
+<script>
+const $=id=>document.getElementById(id);
+// Built-in fallback prices. The page loads prices.json when it can (see loadPrices).
+const DEF={updated:'2026-10-30',models:[
+{key:'haiku',name:'Haiku 5.5',id:'claude-haiku-5-5',input:.10,output:.50,best:'Testing, high volume (prompts up to 100K)',long_context:{above_tokens:1e5,input:.5,output:2.5}},
+{key:'sonnet',name:'Sonnet 5.5',id:'claude-sonnet-5-5',input:2,output:10,best:'Everyday quality work, code'},
+{key:'opus',name:'Opus 5.5',id:'claude-opus-5-5',input:4,output:20,best:'Complex projects, agents'},
+{key:'fable',name:'Fable 5.1',id:'claude-fable-5-1',input:10,output:50,best:'Most capable, research'}]};
+let D=DEF,PSRC='built-in prices';
+const MD=k=>D.models.find(m=>m.key===k);
+const today=new Date().toISOString().slice(0,10);
+const def=()=>({cur:'USD',credit:5,paid:5,date:today});
+let S=def();
+try{Object.assign(S,JSON.parse(localStorage.getItem('cag')||'{}'))}catch(e){}
+const num=id=>Math.max(0,parseFloat($(id).value)||0);
+const price=(k,i)=>{if(k==='custom')return{i:num('pi'),o:num('po')};const m=MD(k)||D.models[0],l=m.long_context;return l&&i>l.above_tokens?{i:l.input,o:l.output}:{i:m.input,o:m.output}};
+const cost=(k,i,o)=>{const r=price(k,i);return(i*r.i+o*r.o)/1e6};
+const usd=c=>'$'+(c<.01?c.toFixed(4):c<1?c.toFixed(3):c.toFixed(2));
+const rate=()=>S.credit>0&&S.paid>0?S.paid/S.credit:1;
+const loc=c=>{const v=c*rate();return(v<1?v.toFixed(3):v.toFixed(2))+' '+S.cur};
+const L=x=>Math.floor(x).toLocaleString('en-US');
+const box=(a,b)=>`<div><b>${a}</b><span>${b}</span></div>`;
+
+function renderPrices(){
+  const sel=$('model'),cur=sel.value,b=D.models[0];
+  sel.innerHTML=D.models.map(m=>`<option value="${m.key}">${m.name}</option>`).join('')+'<option value="custom">Custom prices</option>';
+  if([...sel.options].some(o=>o.value===cur))sel.value=cur;
+  $('ptb').innerHTML=D.models.map(m=>`<tr><td>${m.name}</td><td><code>${m.id}</code></td><td>$${m.input.toFixed(2)}</td><td>$${m.output.toFixed(2)}</td><td>${m.best||''}</td></tr>`).join('');
+  $('rules').innerHTML='<b>Rules of thumb:</b> compared with '+b.name+' (input price), '+D.models.slice(1).map(m=>{const r=m.input/b.input;return m.name+' costs '+(r%1?r.toFixed(1):r)+'×'}).join(', ')+'. The Batch API halves prices for jobs that can wait, and cached input costs a small fraction of normal input. If prices change, choose <b>Custom prices</b> in the calculator.';
+  $('pinfo').textContent='Prices last updated '+D.updated+' ('+PSRC+'). Always confirm on the official pricing page.';
+}
+async function loadPrices(){
+  try{
+    const r=await fetch('prices.json',{cache:'no-cache'});
+    if(!r.ok)throw 0;
+    const j=await r.json();
+    if(!Array.isArray(j.models)||!j.models.length||!j.models.every(m=>m.key&&m.name&&m.id&&typeof m.input==='number'&&typeof m.output==='number'))throw 0;
+    D=j;PSRC='loaded from prices.json';
+  }catch(e){PSRC='built-in prices, because prices.json could not be loaded'}
+  renderPrices();calc();
+}
+function fill(){$('cur').value=S.cur;$('cr').value=S.credit;$('pd').value=S.paid;$('dt').value=S.date}
+function setts(){
+  S.cur=($('cur').value.trim().toUpperCase()||'USD').slice(0,6);S.credit=num('cr');S.paid=num('pd');S.date=$('dt').value||today;
+  try{localStorage.setItem('cag',JSON.stringify(S))}catch(e){}
+  const [y,m,d]=S.date.split('-').map(Number),exp=new Date(Date.UTC(y+1,m-1,d)),days=Math.ceil((exp-Date.now())/864e5);
+  const extra=S.cur==='USD'&&S.credit>0?' ('+((rate()-1)*100).toFixed(1)+'% over face value)':'';
+  $('st').innerHTML=box('$'+S.credit.toFixed(2),'credit used for budgeting')+box(rate().toFixed(2)+' '+S.cur,'effective cost per $1 of credit'+extra)+box(exp.toLocaleDateString('en-US',{year:'numeric',month:'short',day:'numeric',timeZone:'UTC'}),'expires (one year after purchase)')+box(days>0?L(days):'Expired','days left');
+  calc();
+}
+function calc(){
+  const k=$('model').value,cr=S.credit;
+  $('cust').style.display=k==='custom'?'grid':'none';
+  const i=num('ti'),o=num('to'),c=cost(k,i,o);
+  $('o1').innerHTML=box(usd(c),'per request')+box(loc(c),'per request in '+S.cur)+box(c>0?'~'+L(cr/c):'—','requests your credit buys');
+  $('cmp').innerHTML=D.models.map(m=>{const x=cost(m.key,i,o);return`<tr><td>${m.name}</td><td>${usd(x)}</td><td>${loc(x)}</td><td>${x>0?'~'+L(cr/x):'—'}</td></tr>`}).join('');
+  const T=Math.min(200,Math.max(1,Math.round(num('tt')))),s=num('ts'),u=num('tu'),r=num('tr');
+  let ti=0,tc=0;for(let t=1;t<=T;t++){const q=s+u+(u+r)*(t-1);ti+=q;tc+=cost(k,q,r)}
+  $('o2').innerHTML=box(L(ti),'total input tokens')+box(L(T*r),'total output tokens')+box(usd(tc),'cost of the chat')+box(tc>0?'~'+L(cr/tc):'—','such chats per credit');
+  const day=num('rd')*c;
+  $('o3').innerHTML=box(usd(day),'per day')+box(usd(day*30),'per 30 days')+box(loc(day*30),'per 30 days in '+S.cur)+box(day>0?L(cr/day)+' days':'—','until the credit runs out');
+}
+['cur','cr','pd','dt'].forEach(id=>$(id).addEventListener('input',setts));
+document.querySelectorAll('#calc input,#calc select').forEach(e=>e.addEventListener('input',calc));
+$('reset').onclick=()=>{S=def();fill();setts()};
+
+let OS='win',LG='py';
+const KEY={win:'setx ANTHROPIC_API_KEY "paste-your-key-here"\n# then close and reopen the terminal',mac:'export ANTHROPIC_API_KEY="paste-your-key-here"\n# add this line to ~/.zshrc or ~/.bashrc to keep it'};
+const INS={py:'pip install anthropic',js:'npm install @anthropic-ai/sdk',curl:'# nothing to install, curl is enough'};
+const FC={
+py:`import anthropic
+
+client = anthropic.Anthropic()   # reads ANTHROPIC_API_KEY
+
+r = client.messages.create(
+    model="claude-haiku-5-5",
+    max_tokens=500,
+    messages=[{"role": "user", "content": "Explain tokens in two sentences."}],
+)
+print(r.content[0].text)
+print(r.usage)         # input_tokens, output_tokens
+print(r.stop_reason)   # "end_turn" = finished normally`,
+js:`// save as first.mjs, run: node first.mjs
+import Anthropic from "@anthropic-ai/sdk";
+
+const client = new Anthropic();   // reads ANTHROPIC_API_KEY
+
+const r = await client.messages.create({
+  model: "claude-haiku-5-5",
+  max_tokens: 500,
+  messages: [{ role: "user", content: "Explain tokens in two sentences." }],
+});
+console.log(r.content[0].text);
+console.log(r.usage, r.stop_reason);`,
+curl:`curl https://api.anthropic.com/v1/messages \\
+  -H "x-api-key: $ANTHROPIC_API_KEY" \\
+  -H "anthropic-version: 2023-06-01" \\
+  -H "content-type: application/json" \\
+  -d '{"model":"claude-haiku-5-5","max_tokens":500,
+       "messages":[{"role":"user","content":"Explain tokens in two sentences."}]}'`};
+function code(){$('k').textContent=KEY[OS];$('ins').textContent=INS[LG];$('fc').textContent=FC[LG]}
+document.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{
+  const g=b.parentNode.dataset.g;if(g==='os')OS=b.dataset.v;else LG=b.dataset.v;
+  b.parentNode.querySelectorAll('button').forEach(x=>x.classList.toggle('on',x===b));code();
+});
+document.querySelectorAll('.cp').forEach(b=>b.onclick=async()=>{
+  const p=b.previousElementSibling;
+  try{await navigator.clipboard.writeText(p.innerText);b.textContent='Copied'}
+  catch(e){const g=document.createRange();g.selectNodeContents(p);const x=getSelection();x.removeAllRanges();x.addRange(g);b.textContent='Selected'}
+  setTimeout(()=>b.textContent='Copy',1500);
+});
+$('theme').onclick=()=>{const d=document.documentElement,dark=d.dataset.theme?d.dataset.theme==='dark':matchMedia('(prefers-color-scheme:dark)').matches;d.dataset.theme=dark?'light':'dark'};
+renderPrices();code();fill();setts();loadPrices();
+</script>
+</body>
+</html>
