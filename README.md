@@ -4,7 +4,7 @@ A single-page, zero-dependency website that helps beginners get started with the
 
 > **Unofficial.** This is a community learning resource. It is not affiliated with or endorsed by Anthropic. Prices and limits change, so always confirm them on the official pages listed in [Sources](#sources).
 
-**Live site:** https://alialasif.github.io/Claude-API-Starter-Guide/ (once GitHub Pages is enabled, 
+**Live site:** https://alialasif.github.io/Claude-API-Starter-Guide/ 
 
 ## Features
 
