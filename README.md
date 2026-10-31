@@ -4,7 +4,7 @@ A single-page, zero-dependency website that helps beginners get started with the
 
 > **Unofficial.** This is a community learning resource. It is not affiliated with or endorsed by Anthropic. Prices and limits change, so always confirm them on the official pages listed in [Sources](#sources).
 
-**Live site:** https://alialasif.github.io/Claude-API-Starter-Guide/ (once GitHub Pages is enabled, see [Deploy](#deploy-to-github-pages))
+**Live site:** https://alialasif.github.io/Claude-API-Starter-Guide/ (once GitHub Pages is enabled, 
 
 ## Features
 
@@ -37,13 +37,6 @@ python -m http.server 8000
 ```
 
 If you open `index.html` directly from your disk, the browser blocks loading `prices.json`, so the page uses the built-in fallback prices and says so in the Prices section. Serving it as above (or using GitHub Pages) loads `prices.json`.
-
-## Deploy to GitHub Pages
-
-1. Open the repository's **Settings**, then **Pages**.
-2. Under **Build and deployment**, set **Source** to **Deploy from a branch**.
-3. Choose the `main` branch and the `/ (root)` folder, then save.
-4. After a minute or two the site appears at `https://alialasif.github.io/Claude-API-Starter-Guide/`.
 
 ## Automatic price updates
 
